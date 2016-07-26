@@ -358,7 +358,7 @@ void expression()
 }
 
 
-/** Terms **/
+/** Detects errors regarding terms **/
 void term()
 {
     factor();
@@ -377,7 +377,7 @@ void term()
 }
 
 
-/** Factors **/
+/** Detects errors regarding factors **/
 void factor()
 {
     int sym_index = 0;
