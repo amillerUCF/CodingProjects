@@ -110,9 +110,7 @@ void program()
 /** Detects errors in blocks **/
 void block()
 {
-    //////////////////////////
     var = 4;
-    //////////////////////////
     cur_level++;
     int jump_addr = pc;
     char name[12]; //Symbol name
@@ -150,9 +148,6 @@ void block()
     if(strcmp(token, "29") == 0)
     {
         int sym_addr = 4;
-        //////////////////////////////////////////
-        //var = 0;
-        //////////////////////////////////////////
         do
         {
             get();
@@ -161,9 +156,7 @@ void block()
             get();
             strcpy(name, token);
             addSymbol(2, name, 0, cur_level, sym_addr++);
-            //////////////////////////////////////////
             var++;
-            //////////////////////////////////////////
             get();
         }while(strcmp(token, "17") == 0);
 
@@ -181,17 +174,11 @@ void block()
         get();
         strcpy(name, token);
         addSymbol(3, name, 0, cur_level, pc);
-        get(); //PUT IN HERE AFTER
+        get(); 
         if(strcmp(token, "18") != 0)
             error("Semicolon or comma missing.\n");
         get();
         block();
-
-        /*
-        if(strcmp(token, "18") != 0)
-            error("Incorrect symbol after procedure declaration.\n");
-        get();
-        */
 
         /* Check for a period after "end" */
         if(strcmp(token, "19") == 0)
@@ -200,18 +187,13 @@ void block()
         if(strcmp(token, "18") != 0)
             error("Incorrect symbol after procedure declaration.\n");
         get();
-
-        ////////////////////////////////////////////////////////////////////
         emit(2, 0, 0);
-        ////////////////////////////////////////////////////////////////////
     }
 
     instructions[jump_addr].m = pc;
 
     emit(6, 0, var);
-    //////////////////////////////////////////
     var++;
-    //////////////////////////////////////////
     statement();
 
     cur_level--;
@@ -228,9 +210,6 @@ void statement()
         sym_index = searchSymbolTable(token);
         if (sym_index == -1)
             error("Undeclared identifier.\n");
-        /*if(strcmp(token, "33") == 0)
-            return; // "else" statement encountered
-        */
         if(symbol_table[sym_index].kind != 2)
             error("Assignment operator expected.\n");
         get(); //ADDED IN
@@ -251,10 +230,6 @@ void statement()
             error("Procedure not declared.\n");
         emit(5, cur_level - symbol_table[sym_index].level, symbol_table[sym_index].addr);
         get();
-        /*if(strcmp(token, "18") == 0)
-            get();
-        statement();
-        */
     }
     else if(strcmp(token, "21") == 0) //If token is beginsym
     {
@@ -283,10 +258,7 @@ void statement()
         /* Check for "else" */
         if(strcmp(token, "33") != 0)
         {
-            //////////////////////////////////////////////////////////////////
             emit(7, 0, pc+1);
-            //////////////////////////////////////////////////////////////////
-            //get(); COMMENTED OUT
             instructions[then_statement].m = pc;
         }
 
@@ -337,12 +309,6 @@ void statement()
         else
             error("Write of a procedure is not allowed.\n");
         get();
-        /*get();
-        if(strcmp(token, "18") != 0)
-            error("Semicolon or comma missing.\n");
-        get();
-        statement();
-        */
     }
     else if(strcmp(token, "32") == 0) //If token is readsym
     {
@@ -358,11 +324,6 @@ void statement()
         emit(10, 0, 2);
         emit(4, cur_level - symbol_table[sym_index].level, symbol_table[sym_index].addr);
         get();
-        /*if(strcmp(token, "18") != 0)
-            error("Semicolon or comma missing.\n");
-        get();
-        statement();
-        */
     }
 }
 
@@ -391,7 +352,6 @@ void expression()
 
         if(strcmp(temp, "4") == 0)
             emit(2, 0, 2);
-
         else
             emit(2, 0, 3);
     }
