@@ -1,0 +1,9 @@
+TestPokemonCenter.java : contains the main method
+FacadePokemonCenter.java : facade class where all the magic happens
+
+// All other classes in program hold helper methods that the two main classes above use
+
+/**What does the program do**/
+This program emulates the operations of the pokemon centers in the famous franchise "Pokemon".
+Design of program is based off of the Facade Pattern where a facade/object("FacadePokemonCenter.java") 
+is used to provide a simplified interface amongst the rest of the classes.
