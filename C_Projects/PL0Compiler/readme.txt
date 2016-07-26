@@ -1,6 +1,5 @@
-Names:
-Austin Miller
-Camilo Junoy
+/**"What exactly is the project?"**/
+This project is a compiler for a language called PL\0, where the PL\0 code is converted into assembly language. 
 
 /**"How to compile and run project?"**/
  1) Create a new "input.txt" in the same directory as "CompilerDriver.c" if it does not exist in the folder already. 2) Put the code you wish to compile into "input.txt".
