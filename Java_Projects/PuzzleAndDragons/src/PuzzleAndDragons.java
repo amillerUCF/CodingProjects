@@ -21,6 +21,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.imageio.ImageIO;
 
@@ -53,16 +54,20 @@ public class PuzzleAndDragons extends Applet implements MouseListener, MouseMoti
 	File heal = new File("C:/Users/Austin/Desktop/ComputerProgramming/JavaWorkspace/PuzzleAndDragons/src/pink_orb.png");
 	File background = new File("C:/Users/Austin/Desktop/ComputerProgramming/JavaWorkspace/PuzzleAndDragons/src/background.jpeg");
 	File backWall = new File("C:/Users/Austin/Desktop/ComputerProgramming/JavaWorkspace/PuzzleAndDragons/src/backwall.jpeg");
+	File team = new File("C:/Users/Austin/Desktop/ComputerProgramming/JavaWorkspace/PuzzleAndDragons/src/team.png");
 	
 	MediaTracker tracker = new MediaTracker(this);
 	BufferedImage image;
-
+	
+	/* Buttons */
 	private static Button FireOrb = new Button("Fire Orb"); 
 	private static Button WaterOrb = new Button("Water Orb"); 
 	private static Button GrassOrb = new Button("Grass Orb");
 	private static Button LightOrb = new Button("Light Orb");
 	private static Button DarkOrb = new Button("Dark Orb");
 	private static Button HeartOrb = new Button("Heal Orb");
+	private static Button Random = new Button("Randomize Board");
+	private static Button MaxScore = new Button("Calculate Team Score ");
 	
 	
 	@Override
@@ -151,13 +156,36 @@ public class PuzzleAndDragons extends Applet implements MouseListener, MouseMoti
 			}
 		});
 		
+		/* Randomizes Board Button */
+		Random.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) 
+			{
+				RandomizeBoard();
+			}
+		});
 		
-		this.add(FireOrb);
-		this.add(WaterOrb);
-		this.add(GrassOrb);
-		this.add(LightOrb);
-		this.add(DarkOrb);
-		this.add(HeartOrb);
+		/* Calculates Max Score of Team */
+		MaxScore.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) 
+			{
+				Monster m = new Monster(500, 500, 200, 0, -1); // create hard-coded monster; represents a "Dub-rubylit"
+															   // Health: 500
+															   // Attack: 500
+															   // Recovery: 200
+															   // MainAttribute: fire
+															   // SubAttribute: None
+				MaxScoreOfMonster_vs_SingleEnemy_No_Skyfall(m);
+			}
+		});
+		
+		add(FireOrb);
+		add(WaterOrb);
+		add(GrassOrb);
+		add(LightOrb);
+		add(DarkOrb);
+		add(HeartOrb);
+		add(Random);
+		add(MaxScore);
 	}
 	
 	/*public void reset ()
@@ -176,22 +204,20 @@ public class PuzzleAndDragons extends Applet implements MouseListener, MouseMoti
 
 	public void paint(Graphics canvas)
 	{
+		/* Set locations of components */
+		Random.setLocation(72, 440);
+		
 		try {
 			canvas.drawImage(image = ImageIO.read(backWall), 0, 0, null);
+			canvas.drawImage(image = ImageIO.read(team), 492, 76, null);
 		} catch (IOException e) { e.printStackTrace(); }
 		
 		/* Draw the canvas */
 		try { DrawSquares(canvas); } catch (IOException e) { e.printStackTrace(); } 
 	}
-	
-	
-	public int NumOfCombos(int f, int w, int g, int l, int d, int h)
-	{
-		return f/3 + w/3 + g/3 + l/3 + d/3 + h/3;
-	}
 
 	
-	public void DownToTopSearch()
+	/*public void DownToTopSearch()
 	{
 		int trace[][] = board;
 		int nF = 0, nW = 0, nG = 0, nL = 0, nD = 0, nH = 0;
@@ -219,17 +245,11 @@ public class PuzzleAndDragons extends Applet implements MouseListener, MouseMoti
 			}
 			
 		}
-	}
+	}*/
 	
 	
 	public void DrawSquares(Graphics canvas) throws IOException
 	{
-		int nFire = 0;
-		int nWater = 0;
-		int nGrass = 0;
-		int nLight = 0;
-		int nDark = 0;
-		int nHeal = 0;
 		canvas.drawImage(image = ImageIO.read(background), 72, 72, null);
 		canvas.setColor(Color.black);
 		
@@ -243,52 +263,33 @@ public class PuzzleAndDragons extends Applet implements MouseListener, MouseMoti
 				{
 					//If orb is "Fire"
 					if (board[nRow][nCol] == 1)
-					{
 						image = ImageIO.read(fire);
-						nFire++;
-					}
 					
 					//If orb is "Water"
 					else if (board[nRow][nCol] == 2)
-					{
 						image = ImageIO.read(water);
-						nWater++;
-						
-					}
 					
 					//If orb is "Grass"
 					else if (board[nRow][nCol] == 3)
-					{
 						image = ImageIO.read(grass);
-						nGrass++;
-					}
 					
 					//If orb is "Light"
 					else if (board[nRow][nCol] == 4)
-					{
 						image = ImageIO.read(light);
-						nLight++;
-					}
 					
 					//If orb is "Light"
 					else if (board[nRow][nCol] == 5)
-					{
 						image = ImageIO.read(dark);
-						nDark++;
-					}
 					
 					//If orb is "Light"
 					else if (board[nRow][nCol] == 6)
-					{
 						image = ImageIO.read(heal);
-						nHeal++;
-					}
 
 					canvas.drawImage(image, BOARDLEFT - 7 + nCol * SQUAREWIDTH + 8, BOARDTOP + nRow * SQUAREHEIGHT + 6 - 5, null);
 				}
 			}
 		}
-		DownToTopSearch();
+		//DownToTopSearch();
 	}
 	
 	
@@ -368,7 +369,13 @@ public class PuzzleAndDragons extends Applet implements MouseListener, MouseMoti
 	public void mouseDragged(MouseEvent e) {}
 
 	@Override
-	public void mouseMoved(MouseEvent e) {}
+	public void mouseMoved(MouseEvent e) {
+		
+		/* For design purposes */
+		//System.out.println("X: "+e.getX());
+		//System.out.println("Y: "+e.getY());
+		
+	}
 
 	@Override
 	public void mousePressed(MouseEvent e) { mouseClicked(e); }
@@ -422,5 +429,144 @@ public class PuzzleAndDragons extends Applet implements MouseListener, MouseMoti
 		if(y < 5)
 			return board[x][y+1];
 		return 0;
+	}
+	
+	
+	/* Calculates the number of each color */
+	public int[] NumOfColors()
+	{
+		int[] colors = {0, 0, 0, 0, 0, 0};
+		int color = 0;
+		
+		for(int i = 0; i < NUMROWS; i++)
+			for(int j = 0; j < NUMCOLS; j++)
+			{
+				color = board[i][j];
+				if(color == 1)
+					colors[0]++;
+				else if(color == 2)
+					colors[1]++;
+				else if(color == 3)
+					colors[2]++;
+				else if(color == 4)
+					colors[3]++;
+				else if(color == 5)
+					colors[4]++;
+				else if(color == 6)
+					colors[5]++;
+			}
+		return colors;
+	}
+	
+	
+	/* Calculates the total number of possible combos on a board */
+	public int NumOfCombos()
+	{
+		int[] colors = NumOfColors();
+		return colors[0]/3 + colors[1]/3 + colors[2]/3 + colors[3]/3 + colors[4]/3 + colors[5]/3;
+	}
+	
+	
+	public void RandomizeBoard()
+	{
+		int min = 1, max = 6; // ranges for all kinds of orbs
+		
+		/* Set each index in board to a random number (indicating a color) */
+		for(int i = 0; i < NUMROWS; i++)
+			for(int j = 0; j < NUMCOLS; j++)
+				board[i][j] = ThreadLocalRandom.current().nextInt(min, max + 1);
+
+		/* Grab the canvas and redraw all squares on board */
+		Graphics canvas = this.getGraphics();
+		try { DrawSquares(canvas);
+		} catch (IOException e) { e.printStackTrace(); }
+		
+		System.out.println(NumOfCombos());
+	}
+	
+	
+	/*public void CreateMonster()
+	{
+		
+	}
+	*/
+	
+	//(*&))^*()(*^%&*)(**%$^*^$#%^ THIS DOES NOT CONSIDER SUBATTRIBUTES *(&()&(^*()*&^%$^%&*()_*(+
+	
+	/* MaxScoreOfMonster - calculates the max score possible of monster versus a boss
+	 * 
+	 * Parameter: int attack, the attack of the current monster
+	 * 
+	 * Return: max score the monster can make with given board
+	 * 
+	 * Hard-coded Values: health = 500, attack = 500, recovery = 200
+	 */
+	public int MaxScoreOfMonster_vs_SingleEnemy_No_Skyfall(Monster m)
+	{
+		int[] colors = NumOfColors();
+		/* colors:
+		 * index 0 - red
+		 * index 1 - blue
+		 * index 2 - green
+		 * index 3 - yellow
+		 * index 4 - purple
+		 * index 5 - pink
+		 */
+		
+		int main = m.GetAttribute1(m);
+		int sub = m.GetAttribute2(m);
+		
+		/* Formula variables */
+		int newOutput = 0;
+		
+		//
+		//
+		//
+		//
+		if(main == 0 && colors[0] > 2) // main attribute is red
+			System.out.println("Max: " + MaxOutput(colors[0], m.attack));
+		//
+		//
+		//
+		//
+		//
+		
+		return 0;
+	}
+	
+	public int MaxOutput(int numOfOrbs, int attack)
+	{
+		int combos = NumOfCombos();
+		int newOutput = NewOutput(numOfOrbs, attack);
+		
+		return (int) Math.round(newOutput * C(combos));
+	}
+	
+	
+	/* NewOutput - calculates the change in attack before counting combos
+	 * 
+	 * Parameters: 
+	 * 		- int numOfOrb, number of combos with same attribute as monster
+	 * 		- int attack, attack of monster
+	 * 
+	 * Return: value of new attack for monster
+	 */
+	public int NewOutput(int numOfOrb, int attack)
+	{			
+		return (int) (Math.round(attack * O((numOfOrb % 3) + 3)) + Math.round(((numOfOrb / 3) - 1) * (attack * O(3))));
+	}
+	
+	/* Orb Multiplier */
+	public double O(int n)
+	{
+		double d = 1.00 + ((double) n - 3.00) * (0.25);
+		return d;
+	}
+	
+	/* Combo Multiplier */
+	public double C(int n)
+	{
+		double d = 1.00 + ((double) n - 1.00) * (0.25);
+		return d;
 	}
 }
