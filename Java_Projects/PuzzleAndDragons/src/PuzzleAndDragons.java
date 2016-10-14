@@ -174,6 +174,14 @@ public class PuzzleAndDragons extends Applet implements MouseListener, MouseMoti
 															   // Recovery: 200
 															   // MainAttribute: fire
 															   // SubAttribute: None
+				
+				//Monster m = new Monster(1451, 636, 133, 1, 1); // create hard-coded monster; represents my "Water Twin Star Leviathan"
+				   												// Health: 1451
+				   												// Attack: 636
+				   												// Recovery: 133
+																// MainAttribute: water
+				   												// SubAttribute: water
+				
 				MaxScoreOfMonster_vs_SingleEnemy_No_Skyfall(m);
 			}
 		});
@@ -361,6 +369,7 @@ public class PuzzleAndDragons extends Applet implements MouseListener, MouseMoti
 					
 					repaint(nLeftXBoxEdge, nLeftYBoxEdge, nRightXBoxEdge - nLeftXBoxEdge, nRightYBoxEdge - nLeftYBoxEdge); //repaints only the selected square
 				}
+				System.out.println("Combos: \n"+NumOfCombos());
 			}
 		}
 	}
@@ -459,7 +468,13 @@ public class PuzzleAndDragons extends Applet implements MouseListener, MouseMoti
 	}
 	
 	
-	/* Calculates the total number of possible combos on a board */
+	/* Calculates the total number of possible combos on a board 
+	 * 
+	 * **Need Improvement**
+	 * 
+	 * *Note* this will return wrong number when 30 of a single orb
+	 * 
+	 */
 	public int NumOfCombos()
 	{
 		int[] colors = NumOfColors();
@@ -499,7 +514,9 @@ public class PuzzleAndDragons extends Applet implements MouseListener, MouseMoti
 	 * 
 	 * Return: max score the monster can make with given board
 	 * 
-	 * Hard-coded Values: health = 500, attack = 500, recovery = 200
+	 * *Note* Hard-coded Values: health = 500, attack = 500, recovery = 200
+	 * *Note* If sub different from main, sub-attribute attack starts at ceiling_function[attack/3]
+	 * *Note* If sub == main, main-attribute attack starts at ceiling_function[attack/10] + attack
 	 */
 	public int MaxScoreOfMonster_vs_SingleEnemy_No_Skyfall(Monster m)
 	{
@@ -516,6 +533,11 @@ public class PuzzleAndDragons extends Applet implements MouseListener, MouseMoti
 		int main = m.GetAttribute1(m);
 		int sub = m.GetAttribute2(m);
 		
+		/* If main and sub attributes are the same, calculate the new overall attack */
+		if(main == sub)
+			m.attack = m.attack + Math.round(m.attack / 10);
+		
+		
 		/* Formula variables */
 		int newOutput = 0;
 		
@@ -523,7 +545,7 @@ public class PuzzleAndDragons extends Applet implements MouseListener, MouseMoti
 		//
 		//
 		//
-		if(main == 0 && colors[0] > 2) // main attribute is red
+		if(main == 0 && colors[0] > 2) // main attribute is red and there are enough colors to create at least 1 combo
 			System.out.println("Max: " + MaxOutput(colors[0], m.attack));
 		//
 		//
