@@ -1,11 +1,16 @@
-/**
- * Orb Types:
- *  1) Fire (Red)
- *  2) Water (Blue)
- *  3) Grass (Green)
- *  4) Light (Yellow)
- *  5) Dark (Purple)
- *  6) Heal (Pink)
+/* Bugs needed to be fixed:
+ * 1. Math.round() doesn't round up on some machines
+ * 
+ */
+
+
+/* Orb Types:
+ *  1. Fire (Red)
+ *  2. Water (Blue)
+ *  3. Grass (Green)
+ *  4. Light (Yellow)
+ *  5. Dark (Purple)
+ *  6. Heal (Pink)
  */
 
 import java.applet.Applet;
@@ -46,15 +51,14 @@ public class PuzzleAndDragons extends Applet implements MouseListener, MouseMoti
 	
 	
 	/* Orb Files */
-	File fire = new File("C:/Users/Austin/Desktop/ComputerProgramming/JavaWorkspace/PuzzleAndDragons/src/red_orb.png");
-	File water = new File("C:/Users/Austin/Desktop/ComputerProgramming/JavaWorkspace/PuzzleAndDragons/src/blue_orb.png");
-	File grass = new File("C:/Users/Austin/Desktop/ComputerProgramming/JavaWorkspace/PuzzleAndDragons/src/green_orb.png");
-	File light = new File("C:/Users/Austin/Desktop/ComputerProgramming/JavaWorkspace/PuzzleAndDragons/src/yellow_orb.png");
-	File dark = new File("C:/Users/Austin/Desktop/ComputerProgramming/JavaWorkspace/PuzzleAndDragons/src/purple_orb.png");
-	File heal = new File("C:/Users/Austin/Desktop/ComputerProgramming/JavaWorkspace/PuzzleAndDragons/src/pink_orb.png");
-	File background = new File("C:/Users/Austin/Desktop/ComputerProgramming/JavaWorkspace/PuzzleAndDragons/src/background.jpeg");
-	File backWall = new File("C:/Users/Austin/Desktop/ComputerProgramming/JavaWorkspace/PuzzleAndDragons/src/backwall.jpeg");
-	File team = new File("C:/Users/Austin/Desktop/ComputerProgramming/JavaWorkspace/PuzzleAndDragons/src/team.png");
+	File fire = new File("red_orb.png");
+	File water = new File("blue_orb.png");
+	File grass = new File("green_orb.png");
+	File light = new File("yellow_orb.png");
+	File dark = new File("purple_orb.png");
+	File heal = new File("pink_orb.png");
+	File background = new File("background.jpeg");
+	File backWall = new File("backwall.jpeg");
 	
 	MediaTracker tracker = new MediaTracker(this);
 	BufferedImage image;
@@ -168,7 +172,7 @@ public class PuzzleAndDragons extends Applet implements MouseListener, MouseMoti
 		MaxScore.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) 
 			{
-				Monster m = new Monster(500, 500, 200, 0, -1); // create hard-coded monster; represents a "Dub-rubylit"
+				//Monster m = new Monster(500, 500, 200, 0, -1); // create hard-coded monster; represents a "Dub-rubylit"
 															   // Health: 500
 															   // Attack: 500
 															   // Recovery: 200
@@ -182,7 +186,15 @@ public class PuzzleAndDragons extends Applet implements MouseListener, MouseMoti
 																// MainAttribute: water
 				   												// SubAttribute: water
 				
-				MaxScoreOfMonster_vs_SingleEnemy_No_Skyfall(m);
+				Monster m = new Monster(500, 400, 300, 0, 2); // create hard-coded monster; represents a "Red Dragon Fruit"
+																// Health: 500
+																// Attack: 400
+																// Recovery: 300
+																// MainAttribute: fire
+																// SubAttribute: grass
+				
+				int maxScore = MaxScoreOfMonster_vs_SingleEnemy_No_Skyfall(m);
+				System.out.println("Max output: "+maxScore);
 			}
 		});
 		
@@ -217,7 +229,6 @@ public class PuzzleAndDragons extends Applet implements MouseListener, MouseMoti
 		
 		try {
 			canvas.drawImage(image = ImageIO.read(backWall), 0, 0, null);
-			canvas.drawImage(image = ImageIO.read(team), 492, 76, null);
 		} catch (IOException e) { e.printStackTrace(); }
 		
 		/* Draw the canvas */
@@ -229,7 +240,6 @@ public class PuzzleAndDragons extends Applet implements MouseListener, MouseMoti
 	{
 		int trace[][] = board;
 		int nF = 0, nW = 0, nG = 0, nL = 0, nD = 0, nH = 0;
-
 		for(int i = NUMROWS-1; i >= 0; i--)
 		{
 			
@@ -324,10 +334,7 @@ public class PuzzleAndDragons extends Applet implements MouseListener, MouseMoti
 				if (x > nLeftXBoxEdge && x < nRightXBoxEdge && y > nLeftYBoxEdge && y < nRightYBoxEdge)
 				{
 					
-					/* 
-					 * - Indicates what orbs are to be placed 
-					 * - Doesn't allow multiple placements of same orb
-					 */
+					/* Indicates what orbs are to be placed; doesn't allow multiple placements of same orb */
 					if(!FireOrb.isEnabled()) //'1' indicates a red orb
 					{
 						if(board[nRow][nCol] == 1)
@@ -404,8 +411,7 @@ public class PuzzleAndDragons extends Applet implements MouseListener, MouseMoti
 	
 	/* Technical Methods */
 	
-	/*
-	 * return:
+	/* return:
 	 *  - 0 is no number above, else the number above
 	 */
 	public int goUp(int x, int y)
@@ -415,8 +421,7 @@ public class PuzzleAndDragons extends Applet implements MouseListener, MouseMoti
 		return 0;
 	}
 	
-	/*
-	 * return:
+	/* return:
 	 *  - 0 is no number below, else the number below
 	 */
 	public int goDown(int x, int y)
@@ -506,15 +511,13 @@ public class PuzzleAndDragons extends Applet implements MouseListener, MouseMoti
 	}
 	*/
 	
-	//(*&))^*()(*^%&*)(**%$^*^$#%^ THIS DOES NOT CONSIDER SUBATTRIBUTES *(&()&(^*()*&^%$^%&*()_*(+
 	
 	/* MaxScoreOfMonster - calculates the max score possible of monster versus a boss
 	 * 
-	 * Parameter: int attack, the attack of the current monster
+	 * parameter: Monster m - given monster to calculate new attack on
 	 * 
-	 * Return: max score the monster can make with given board
+	 * return: max damage the monster can output with given board
 	 * 
-	 * *Note* Hard-coded Values: health = 500, attack = 500, recovery = 200
 	 * *Note* If sub different from main, sub-attribute attack starts at ceiling_function[attack/3]
 	 * *Note* If sub == main, main-attribute attack starts at ceiling_function[attack/10] + attack
 	 */
@@ -532,28 +535,76 @@ public class PuzzleAndDragons extends Applet implements MouseListener, MouseMoti
 		
 		int main = m.GetAttribute1(m);
 		int sub = m.GetAttribute2(m);
-		
-		/* If main and sub attributes are the same, calculate the new overall attack */
-		if(main == sub)
-			m.attack = m.attack + Math.round(m.attack / 10);
-		
+		boolean sameAttFlag = false; // set 'true' when both attributes of monster are same, otherwise 'false'
 		
 		/* Formula variables */
-		int newOutput = 0;
+		int mainAttack = 0;
+		int subAttack = 0;
 		
-		//
-		//
-		//
-		//
-		if(main == 0 && colors[0] > 2) // main attribute is red and there are enough colors to create at least 1 combo
-			System.out.println("Max: " + MaxOutput(colors[0], m.attack));
-		//
-		//
-		//
-		//
-		//
+		/* If main and sub attributes are the same, calculate the new overall attack, and set flag */
+		if(main == sub)
+		{
+			m.attack = m.attack + Math.round(m.attack / 10);	
+			sameAttFlag = true;
+		}
 		
-		return 0;
+		/* Calculate main attribute attack */
+		if(main != -1)
+		{
+			/* Main attribute is fire and there are enough colors to create at least 1 combo */
+			if(main == 0 && colors[0] > 2)
+				mainAttack = MaxOutput(colors[0], m.attack);
+			
+			/* Main attribute is water and there are enough colors to create at least 1 combo */
+			else if(main == 1 && colors[1] > 2)
+				mainAttack = MaxOutput(colors[1], m.attack);
+			
+			/* Main attribute is grass and there are enough colors to create at least 1 combo */
+			else if(main == 2 && colors[2] > 2)
+				mainAttack = MaxOutput(colors[2], m.attack);
+			
+			/* Main attribute is light and there are enough colors to create at least 1 combo */
+			else if(main == 3 && colors[3] > 2)
+				mainAttack = MaxOutput(colors[3], m.attack);
+			
+			/* Main attribute is dark and there are enough colors to create at least 1 combo */
+			else if(main == 4 && colors[4] > 2)
+				mainAttack = MaxOutput(colors[4], m.attack);
+		}
+		else
+			System.out.println("Error: Attack cannot be calculated because the given monster has no main attribute.");
+		
+		
+		/* Calculate sub attribute attack */
+		if(sub != -1 && sameAttFlag == false)
+		{	
+			/* Sub attribute is fire and there are enough colors to create at least 1 combo */
+			if(sub == 0 && colors[0] > 2)
+				subAttack = MaxOutput(colors[0], Math.round(m.attack / 3));
+			
+			/* Sub attribute is water and there are enough colors to create at least 1 combo */
+			else if(sub == 1 && colors[1] > 2)
+				subAttack = MaxOutput(colors[1], Math.round(m.attack / 3));
+			
+			/* Sub attribute is grass and there are enough colors to create at least 1 combo */
+			else if(sub == 2 && colors[2] > 2)
+				subAttack = MaxOutput(colors[2], Math.round(m.attack / 3));
+			
+			/* Sub attribute is light and there are enough colors to create at least 1 combo */
+			else if(sub == 3 && colors[3] > 2)
+				subAttack = MaxOutput(colors[3], Math.round(m.attack / 3));
+			
+			/* Sub attribute is dark and there are enough colors to create at least 1 combo */
+			else if(sub == 4 && colors[4] > 2)
+				subAttack = MaxOutput(colors[4], Math.round(m.attack / 3));
+		}
+		
+		int maxOutput = mainAttack + subAttack; // create the final damage output
+		
+		System.out.println("Main: "+mainAttack);
+		System.out.println("Sub: "+subAttack);
+		
+		return maxOutput;
 	}
 	
 	public int MaxOutput(int numOfOrbs, int attack)
@@ -567,11 +618,11 @@ public class PuzzleAndDragons extends Applet implements MouseListener, MouseMoti
 	
 	/* NewOutput - calculates the change in attack before counting combos
 	 * 
-	 * Parameters: 
+	 * parameters: 
 	 * 		- int numOfOrb, number of combos with same attribute as monster
 	 * 		- int attack, attack of monster
 	 * 
-	 * Return: value of new attack for monster
+	 * return: value of new attack for monster
 	 */
 	public int NewOutput(int numOfOrb, int attack)
 	{			
