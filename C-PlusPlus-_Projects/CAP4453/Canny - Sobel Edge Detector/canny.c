@@ -33,7 +33,7 @@ int argc;
 char **argv;
 {
     int     i, j, p, q, mr, sig, centx, centy, areaOfTops = 0;
-    double  xsum, ysum, maxival, slope, percent, cutoff, maskvalx, maskvaly;
+    double  xsum, ysum, maxival, slope, percent, cutoff;
     FILE    *fo1, *fo2, *fo3, *fp1, *fopen();
     char    *foobar;
     long int histogram[256];
@@ -61,12 +61,12 @@ char **argv;
     // Sigma parameter
     argc--; argv++;
     foobar = *argv;
-    sig = atoi(foobar);
+    sig = atof(foobar);
 
     // Percent parameter
     argc--; argv++;
     foobar = *argv;
-    percent = atoi(foobar);
+    percent = atof(foobar);
 
     mr = (int)(sig * 3);
     centx = (MAXMASK / 2);
@@ -98,11 +98,8 @@ char **argv;
     {
         for (q = -mr; q <= mr; q++)
         {
-            maskvalx = (p*(exp(-1 * (((p*p) + (q*q)) / (2 * (sig*sig))))));
-            maskvaly = (q*(exp(-1 * (((p*p) + (q*q)) / (2 * (sig*sig))))));
-
-            (xmask[p + centy][q + centx]) = maskvalx;
-            (ymask[p + centy][q + centx]) = maskvaly;
+            xmask[p + centy][q + centx] = (p*(exp(-1 * (((p*p) + (q*q)) / (2 * (sig*sig))))));
+            ymask[p + centy][q + centx] = (q*(exp(-1 * (((p*p) + (q*q)) / (2 * (sig*sig))))));
         }
     }
 
@@ -185,7 +182,6 @@ char **argv;
         }
     }
 
-
     for (i = 0; i < 256; i++)
     {
         for (j = 0; j < 256; j++)
@@ -206,24 +202,26 @@ char **argv;
             histogram[(int)ival[i][j]]++;
         }
     }
-
+    
     // Find cutoff
     cutoff = (percent / 100) * 256 * 256;
 
+ 
     // Find hi and lo
     for (i = 255; i >= 0; i--)
     {
         areaOfTops += histogram[i];
-        if (areaOfTops > cutoff)
+        if (areaOfTops > cutoff) {
             break;
+        }
     }
     hi = i;
     lo = .35*hi;
 
     // Double thresholding
-    for (i = mr; i < (256 - mr); i++)
+    for (i = mr; i < (PICSIZE - mr); i++)
     {
-        for (j = mr; j < (256 - mr); j++)
+        for (j = mr; j < (PICSIZE - mr); j++)
         {
             if (edgeflag[i][j] == 255)
             {
@@ -239,7 +237,6 @@ char **argv;
                     double_threshold(i + 1, j);
                     double_threshold(i + 1, j + 1);
                 }
-
             }
         }
     }
