@@ -2,7 +2,7 @@
 
 public class BSTNode {
 
-	BST bst = new BST();
+	//BST bst = new BST();
 	private BSTNode left, right;
 	private int data;
 	
